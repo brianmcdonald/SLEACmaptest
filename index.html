@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css" />
+        <link rel="stylesheet" type="text/css" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css" />
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css" />
+        <link rel="stylesheet" href="css/Control.OSMGeocoder.css" />
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-heat.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/OSMBuildings-Leaflet.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/leaflet-tilelayer-wmts.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/Control.OSMGeocoder.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
+        <script src="data/NigeriaCoverageClassification0.js"></script>
+        <script src="data/NigeriaSampleSizeAchieved1.js"></script>
+        <script src="data/MaliCoverageClassification2.js"></script>
+        <script src="data/MaliSampleSizeAchieved3.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.addAttribution('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a>');
+        var bounds_group = new L.featureGroup([]);
+        var basemap0 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+            maxZoom: 28
+        });
+        basemap0.addTo(map);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+            map.setMaxBounds(map.getBounds());
+        }
+        function geoJson2heat(geojson, weight) {
+          return geojson.features.map(function(feature) {
+            return [
+              feature.geometry.coordinates[1],
+              feature.geometry.coordinates[0],
+              feature.properties[weight]
+            ];
+          });
+        }
+        function pop_NigeriaCoverageClassification0(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_NigeriaCoverageClassification0_0(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Name'] !== null ? Autolinker.link(String(feature.properties['admin2Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Pcod'] !== null ? Autolinker.link(String(feature.properties['admin2Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2RefN'] !== null ? Autolinker.link(String(feature.properties['admin2RefN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2AltN'] !== null ? Autolinker.link(String(feature.properties['admin2AltN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Al_1'] !== null ? Autolinker.link(String(feature.properties['admin2Al_1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Name'] !== null ? Autolinker.link(String(feature.properties['admin1Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Pcod'] !== null ? Autolinker.link(String(feature.properties['admin1Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Name'] !== null ? Autolinker.link(String(feature.properties['admin0Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Pcod'] !== null ? Autolinker.link(String(feature.properties['admin0Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['date'] !== null ? Autolinker.link(String(feature.properties['date'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validOn'] !== null ? Autolinker.link(String(feature.properties['validOn'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ValidTo'] !== null ? Autolinker.link(String(feature.properties['ValidTo'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? Autolinker.link(String(feature.properties['Shape_Leng'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? Autolinker.link(String(feature.properties['Shape_Area'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Country</th>\
+                        <td>' + (feature.properties['SLEAC Results_Country'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Country'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_HD Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_HD Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_HD Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SLEAC Results_Latitude'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Latitude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SLEAC Results_Longitude'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Longitude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_SLEAC Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_SLEAC Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_SLEAC Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Villages sampled</th>\
+                        <td>' + (feature.properties['SLEAC Results_Villages sampled'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Villages sampled'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Sample size achieved (SAM cases only)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Covered cases (C in)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Covered cases (C in)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Covered cases (C in)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Coverage classification</th>\
+                        <td>' + (feature.properties['SLEAC Results_Coverage classification'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Coverage classification'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_NigeriaCoverageClassification0_0(feature) {
+            switch(feature.properties['SLEAC Results_Coverage classification']) {
+                case 'High':
+                    return {
+                pane: 'pane_NigeriaCoverageClassification0',
+                opacity: 1,
+                color: 'rgba(181,181,181,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+            }
+                    break;
+                case 'Moderate':
+                    return {
+                pane: 'pane_NigeriaCoverageClassification0',
+                opacity: 1,
+                color: 'rgba(181,181,181,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(245,243,74,1.0)',
+            }
+                    break;
+                case 'Low':
+                    return {
+                pane: 'pane_NigeriaCoverageClassification0',
+                opacity: 1,
+                color: 'rgba(181,181,181,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_NigeriaCoverageClassification0',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(101,211,4,0.0)',
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_NigeriaCoverageClassification0');
+        map.getPane('pane_NigeriaCoverageClassification0').style.zIndex = 400;
+        map.getPane('pane_NigeriaCoverageClassification0').style['mix-blend-mode'] = 'normal';
+    var layer_NigeriaCoverageClassification0 = new L.geoJson(json_NigeriaCoverageClassification0, {
+        attribution: '<a href=""></a>',
+        pane: 'pane_NigeriaCoverageClassification0',
+        onEachFeature: pop_NigeriaCoverageClassification0,
+        style: style_NigeriaCoverageClassification0_0,
+    });
+        bounds_group.addLayer(layer_NigeriaCoverageClassification0);
+        map.addLayer(layer_NigeriaCoverageClassification0);
+        function pop_NigeriaSampleSizeAchieved1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_NigeriaSampleSizeAchieved1_0(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Name'] !== null ? Autolinker.link(String(feature.properties['admin2Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Pcod'] !== null ? Autolinker.link(String(feature.properties['admin2Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2RefN'] !== null ? Autolinker.link(String(feature.properties['admin2RefN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2AltN'] !== null ? Autolinker.link(String(feature.properties['admin2AltN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Al_1'] !== null ? Autolinker.link(String(feature.properties['admin2Al_1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Name'] !== null ? Autolinker.link(String(feature.properties['admin1Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Pcod'] !== null ? Autolinker.link(String(feature.properties['admin1Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Name'] !== null ? Autolinker.link(String(feature.properties['admin0Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Pcod'] !== null ? Autolinker.link(String(feature.properties['admin0Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['date'] !== null ? Autolinker.link(String(feature.properties['date'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validOn'] !== null ? Autolinker.link(String(feature.properties['validOn'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ValidTo'] !== null ? Autolinker.link(String(feature.properties['ValidTo'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? Autolinker.link(String(feature.properties['Shape_Leng'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? Autolinker.link(String(feature.properties['Shape_Area'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Country</th>\
+                        <td>' + (feature.properties['SLEAC Results_Country'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Country'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_HD Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_HD Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_HD Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SLEAC Results_Latitude'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Latitude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SLEAC Results_Longitude'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Longitude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_SLEAC Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_SLEAC Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_SLEAC Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Villages sampled</th>\
+                        <td>' + (feature.properties['SLEAC Results_Villages sampled'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Villages sampled'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Sample size achieved (SAM cases only)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Covered cases (C in)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Covered cases (C in)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Covered cases (C in)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Coverage classification</th>\
+                        <td>' + (feature.properties['SLEAC Results_Coverage classification'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Coverage classification'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_NigeriaSampleSizeAchieved1_0(feature) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            // Start of if blocks and style check logic
+            if (NigeriaSampleSizeAchieved1rule0_eval_expression(context)) {
+                  return {
+                pane: 'pane_NigeriaSampleSizeAchieved1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+            };
+                }
+                else if (NigeriaSampleSizeAchieved1rule1_eval_expression(context)) {
+                  return {
+                pane: 'pane_NigeriaSampleSizeAchieved1',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+            };
+                }
+            else {
+                return {fill: false, stroke: false};
+            }
+        }
+        map.createPane('pane_NigeriaSampleSizeAchieved1');
+        map.getPane('pane_NigeriaSampleSizeAchieved1').style.zIndex = 401;
+        map.getPane('pane_NigeriaSampleSizeAchieved1').style['mix-blend-mode'] = 'normal';
+    var layer_NigeriaSampleSizeAchieved1 = new L.geoJson(json_NigeriaSampleSizeAchieved1, {
+        attribution: '<a href=""></a>',
+        pane: 'pane_NigeriaSampleSizeAchieved1',
+        onEachFeature: pop_NigeriaSampleSizeAchieved1,
+        style: style_NigeriaSampleSizeAchieved1_0,
+    });
+        bounds_group.addLayer(layer_NigeriaSampleSizeAchieved1);
+        map.addLayer(layer_NigeriaSampleSizeAchieved1);
+        function pop_MaliCoverageClassification2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_MaliCoverageClassification2_0(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Name'] !== null ? Autolinker.link(String(feature.properties['admin0Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Pcod'] !== null ? Autolinker.link(String(feature.properties['admin0Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Name'] !== null ? Autolinker.link(String(feature.properties['admin1Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Pcod'] !== null ? Autolinker.link(String(feature.properties['admin1Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Name'] !== null ? Autolinker.link(String(feature.properties['admin2Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Pcod'] !== null ? Autolinker.link(String(feature.properties['admin2Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2RefN'] !== null ? Autolinker.link(String(feature.properties['admin2RefN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2AltN'] !== null ? Autolinker.link(String(feature.properties['admin2AltN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Al_1'] !== null ? Autolinker.link(String(feature.properties['admin2Al_1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['date'] !== null ? Autolinker.link(String(feature.properties['date'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validOn'] !== null ? Autolinker.link(String(feature.properties['validOn'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validTo'] !== null ? Autolinker.link(String(feature.properties['validTo'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? Autolinker.link(String(feature.properties['Shape_Leng'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? Autolinker.link(String(feature.properties['Shape_Area'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Health District</th>\
+                        <td>' + (feature.properties['SLEAC Results_Health District'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Health District'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_HD Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_HD Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_HD Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_SLEAC Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_SLEAC Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_SLEAC Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Villages sampled</th>\
+                        <td>' + (feature.properties['SLEAC Results_Villages sampled'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Villages sampled'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Sample size achieved (SAM cases only)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Covered cases (C in)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Covered cases (C in)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Covered cases (C in)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Coverage classification</th>\
+                        <td>' + (feature.properties['SLEAC Results_Coverage classification'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Coverage classification'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_MaliCoverageClassification2_0(feature) {
+            switch(feature.properties['SLEAC Results_Coverage classification']) {
+                case 'High':
+                    return {
+                pane: 'pane_MaliCoverageClassification2',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(26,177,13,1.0)',
+            }
+                    break;
+                case 'Low':
+                    return {
+                pane: 'pane_MaliCoverageClassification2',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+            }
+                    break;
+                case 'Moderate':
+                    return {
+                pane: 'pane_MaliCoverageClassification2',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(245,243,74,1.0)',
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_MaliCoverageClassification2',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(166,186,135,0.0)',
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_MaliCoverageClassification2');
+        map.getPane('pane_MaliCoverageClassification2').style.zIndex = 402;
+        map.getPane('pane_MaliCoverageClassification2').style['mix-blend-mode'] = 'normal';
+    var layer_MaliCoverageClassification2 = new L.geoJson(json_MaliCoverageClassification2, {
+        attribution: '<a href=""></a>',
+        pane: 'pane_MaliCoverageClassification2',
+        onEachFeature: pop_MaliCoverageClassification2,
+        style: style_MaliCoverageClassification2_0,
+    });
+        bounds_group.addLayer(layer_MaliCoverageClassification2);
+        map.addLayer(layer_MaliCoverageClassification2);
+        function pop_MaliSampleSizeAchieved3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    layer.setStyle(style_MaliSampleSizeAchieved3_0(feature));
+
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Name'] !== null ? Autolinker.link(String(feature.properties['admin0Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin0Pcod'] !== null ? Autolinker.link(String(feature.properties['admin0Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Name'] !== null ? Autolinker.link(String(feature.properties['admin1Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin1Pcod'] !== null ? Autolinker.link(String(feature.properties['admin1Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Name'] !== null ? Autolinker.link(String(feature.properties['admin2Name'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Pcod'] !== null ? Autolinker.link(String(feature.properties['admin2Pcod'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2RefN'] !== null ? Autolinker.link(String(feature.properties['admin2RefN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2AltN'] !== null ? Autolinker.link(String(feature.properties['admin2AltN'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['admin2Al_1'] !== null ? Autolinker.link(String(feature.properties['admin2Al_1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['date'] !== null ? Autolinker.link(String(feature.properties['date'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validOn'] !== null ? Autolinker.link(String(feature.properties['validOn'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validTo'] !== null ? Autolinker.link(String(feature.properties['validTo'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Leng'] !== null ? Autolinker.link(String(feature.properties['Shape_Leng'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? Autolinker.link(String(feature.properties['Shape_Area'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Health District</th>\
+                        <td>' + (feature.properties['SLEAC Results_Health District'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Health District'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_HD Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_HD Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_HD Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_SLEAC Code</th>\
+                        <td>' + (feature.properties['SLEAC Results_SLEAC Code'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_SLEAC Code'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Villages sampled</th>\
+                        <td>' + (feature.properties['SLEAC Results_Villages sampled'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Villages sampled'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Sample size achieved (SAM cases only)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Sample size achieved (SAM cases only)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Covered cases (C in)</th>\
+                        <td>' + (feature.properties['SLEAC Results_Covered cases (C in)'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Covered cases (C in)'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">SLEAC Results_Coverage classification</th>\
+                        <td>' + (feature.properties['SLEAC Results_Coverage classification'] !== null ? Autolinker.link(String(feature.properties['SLEAC Results_Coverage classification'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent);
+        }
+
+        function style_MaliSampleSizeAchieved3_0(feature) {
+            var context = {
+                feature: feature,
+                variables: {}
+            };
+            // Start of if blocks and style check logic
+            if (MaliSampleSizeAchieved3rule0_eval_expression(context)) {
+                  return {
+                pane: 'pane_MaliSampleSizeAchieved3',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+            };
+                }
+                else if (MaliSampleSizeAchieved3rule1_eval_expression(context)) {
+                  return {
+                pane: 'pane_MaliSampleSizeAchieved3',
+                opacity: 1,
+                color: 'rgba(0,0,0,0.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+            };
+                }
+            else {
+                return {fill: false, stroke: false};
+            }
+        }
+        map.createPane('pane_MaliSampleSizeAchieved3');
+        map.getPane('pane_MaliSampleSizeAchieved3').style.zIndex = 403;
+        map.getPane('pane_MaliSampleSizeAchieved3').style['mix-blend-mode'] = 'normal';
+    var layer_MaliSampleSizeAchieved3 = new L.geoJson(json_MaliSampleSizeAchieved3, {
+        attribution: '<a href=""></a>',
+        pane: 'pane_MaliSampleSizeAchieved3',
+        onEachFeature: pop_MaliSampleSizeAchieved3,
+        style: style_MaliSampleSizeAchieved3_0,
+    });
+        bounds_group.addLayer(layer_MaliSampleSizeAchieved3);
+        map.addLayer(layer_MaliSampleSizeAchieved3);
+        var osmGeocoder = new L.Control.OSMGeocoder({
+            collapsed: false,
+            position: 'topright',
+            text: 'Search',
+        });
+        osmGeocoder.addTo(map);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Mali Sample Size Achieved<br /><table><tr><td style="text-align: center;"><img src="legend/MaliSampleSizeAchieved3_Under400.png" /></td><td>Under40</td></tr><tr><td style="text-align: center;"><img src="legend/MaliSampleSizeAchieved3_Over401.png" /></td><td>Over 40</td></tr></table>': layer_MaliSampleSizeAchieved3,'Mali Coverage Classification<br /><table><tr><td style="text-align: center;"><img src="legend/MaliCoverageClassification2_High0.png" /></td><td>High</td></tr><tr><td style="text-align: center;"><img src="legend/MaliCoverageClassification2_Low1.png" /></td><td>Low</td></tr><tr><td style="text-align: center;"><img src="legend/MaliCoverageClassification2_Moderate2.png" /></td><td>Moderate</td></tr><tr><td style="text-align: center;"><img src="legend/MaliCoverageClassification2_3.png" /></td><td></td></tr></table>': layer_MaliCoverageClassification2,'Nigeria Sample Size Achieved<br /><table><tr><td style="text-align: center;"><img src="legend/NigeriaSampleSizeAchieved1_Under600.png" /></td><td>Under 60</td></tr><tr><td style="text-align: center;"><img src="legend/NigeriaSampleSizeAchieved1_Over601.png" /></td><td>Over60</td></tr></table>': layer_NigeriaSampleSizeAchieved1,'Nigeria Coverage Classification<br /><table><tr><td style="text-align: center;"><img src="legend/NigeriaCoverageClassification0_High0.png" /></td><td>High</td></tr><tr><td style="text-align: center;"><img src="legend/NigeriaCoverageClassification0_Moderate1.png" /></td><td>Moderate</td></tr><tr><td style="text-align: center;"><img src="legend/NigeriaCoverageClassification0_Low2.png" /></td><td>Low</td></tr><tr><td style="text-align: center;"><img src="legend/NigeriaCoverageClassification0_3.png" /></td><td></td></tr></table>': layer_NigeriaCoverageClassification0,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
